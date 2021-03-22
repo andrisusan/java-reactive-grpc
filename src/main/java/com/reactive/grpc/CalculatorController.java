@@ -3,7 +3,7 @@ package com.reactive.grpc;
 import io.grpc.ManagedChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
  */
 
 @RestController
-public class HelloController {
+public class CalculatorController {
 
   @Autowired
   private ManagedChannel channel;
@@ -20,11 +20,11 @@ public class HelloController {
   private ReactorCalculatorServiceGrpc.ReactorCalculatorServiceStub serviceStub;
 
 
-  @GetMapping("/hello")
-  public Mono<Object> hello() {
+  @GetMapping("/square/{value}")
+  public Mono<Object> findSquare(@PathVariable String value) {
     serviceStub = ReactorCalculatorServiceGrpc.newReactorStub(channel);
     Input input = Input.newBuilder()
-        .setNumber(5)
+        .setNumber(Integer.parseInt(value))
         .build();
 
     return serviceStub.findSquare(input).map(Output::getResult);
